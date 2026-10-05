@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My 80/20 Food Ranking</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f1e8;
+      color: #26332a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 850px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #66736a;
+      margin-bottom: 35px;
+      line-height: 1.5;
+    }
+
+    .progress {
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+      color: #66736a;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #ddd8cc;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #708b68;
+      transition: width 0.3s ease;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .food-button {
+      border: none;
+      background: white;
+      border-radius: 18px;
+      padding: 0;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .food-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .food-image {
+      width: 100%;
+      height: 220px;
+      background: #ddd8cc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+
+    .food-name {
+      padding: 18px;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .results {
+      display: none;
+    }
+
+    .results h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .ranking {
+      margin-top: 25px;
+      text-align: left;
+    }
+
+    .rank {
+      background: white;
+      padding: 16px 20px;
+      margin: 10px 0;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .rank-number {
+      font-weight: bold;
+      margin-right: 12px;
+    }
+
+    .restart {
+      margin-top: 25px;
+      padding: 14px 25px;
+      border: none;
+      border-radius: 10px;
+      background: #708b68;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+
+      .food-image {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <section id="quiz">
+
+      <h1>My 80/20 Food Ranking</h1>
+
+      <p class="subtitle">
+        Which food would you rather have?
+        Choose the one you would enjoy more.
+      </p>
+
+      <div class="progress">
+        <span id="progressText">Choice 1 of 20</span>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="choices">
+
+        <button class="food-button" id="foodA">
+          <div class="food-image" id="imageA">🍕</div>
+          <div class="food-name" id="nameA">Pizza</div>
+        </button>
+
+        <button class="food-button" id="foodB">
+          <div class="food-image" id="imageB">🍩</div>
+          <div class="food-name" id="nameB">Donuts</div>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section class="results" id="results">
+
+      <h2>Your Personal Ranking</h2>
+
+      <p class="subtitle">
+        Based on the choices you made, here's your personalized ranking.
+      </p>
+
+      <div class="ranking" id="ranking"></div>
+
+      <button class="restart" id="restart">
+        Take the quiz again
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    /*
+      FOOD LIST
+
+      We'll eventually replace these emoji with real
+      food photographs.
+    */
+
+    const foods = [
+      { name: "Pizza", emoji: "🍕", score: 1000 },
+      { name: "Donuts", emoji: "🍩", score: 1000 },
+      { name: "Ice Cream", emoji: "🍦", score: 1000 },
+      { name: "French Fries", emoji: "🍟", score: 1000 },
+      { name: "Cookies", emoji: "🍪", score: 1000 },
+      { name: "Chocolate", emoji: "🍫", score: 1000 },
+      { name: "Burgers", emoji: "🍔", score: 1000 },
+      { name: "Cake", emoji: "🍰", score: 1000 }
+    ];
+
+
+    const TOTAL_CHOICES = 20;
+
+    let currentChoice = 0;
+
+
+    /*
+      Get elements from the page
+    */
+
+    const foodA = document.getElementById("foodA");
+    const foodB = document.getElementById("foodB");
+
+    const nameA = document.getElementById("nameA");
+    const nameB = document.getElementById("nameB");
+
+    const imageA = document.getElementById("imageA");
+    const imageB = document.getElementById("imageB");
+
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+
+    const quiz = document.getElementById("quiz");
+    const results = document.getElementById("results");
+
+    const ranking = document.getElementById("ranking");
+    const restart = document.getElementById("restart");
+
+
+    /*
+      Pick two different foods
+    */
+
+    function getTwoFoods() {
+
+      const first =
+        Math.floor(Math.random() * foods.length);
+
+      let second =
+        Math.floor(Math.random() * foods.length);
+
+      while (second === first) {
+        second =
+          Math.floor(Math.random() * foods.length);
+      }
+
+      return [foods[first], foods[second]];
+    }
+
+
+    /*
+      Display the next matchup
+    */
+
+    function showMatchup() {
+
+      const [first, second] = getTwoFoods();
+
+      nameA.textContent = first.name;
+      nameB.textContent = second.name;
+
+      imageA.textContent = first.emoji;
+      imageB.textContent = second.emoji;
+
+      foodA.dataset.food = first.name;
+      foodB.dataset.food = second.name;
+
+      progressText.textContent =
+        `Choice ${currentChoice + 1} of ${TOTAL_CHOICES}`;
+
+      progressFill.style.width =
+        `${(currentChoice / TOTAL_CHOICES) * 100}%`;
+    }
+
+
+    /*
+      Update the ranking using an Elo-style system.
+    */
+
+    function chooseFood(selectedName) {
+
+      const selected =
+        foods.find(food => food.name === selectedName);
+
+      const otherName =
+        selectedName === foodA.dataset.food
+          ? foodB.dataset.food
+          : foodA.dataset.food;
+
+      const other =
+        foods.find(food => food.name === otherName);
+
+
+      /*
+        The winner gains points.
+        The loser loses points.
+      */
+
+      selected.score += 25;
+      other.score -= 25;
+
+
+      currentChoice++;
+
+
+      if (currentChoice >= TOTAL_CHOICES) {
+        showResults();
+      } else {
+        showMatchup();
+      }
+    }
+
+
+    /*
+      Show the final ranking
+    */
+
+    function showResults() {
+
+      quiz.style.display = "none";
+      results.style.display = "block";
+
+      progressFill.style.width = "100%";
+
+      const sortedFoods =
+        [...foods].sort((a, b) => b.score - a.score);
+
+
+      ranking.innerHTML = "";
+
+
+      sortedFoods.forEach((food, index) => {
+
+        const row =
+          document.createElement("div");
+
+        row.className = "rank";
+
+        row.innerHTML = `
+          <div>
+            <span class="rank-number">
+              ${index + 1}.
+            </span>
+            ${food.emoji} ${food.name}
+          </div>
+
+          <span>
+            ${food.score}
+          </span>
+        `;
+
+        ranking.appendChild(row);
+
+      });
+    }
+
+
+    /*
+      Restart the quiz
+    */
+
+    function restartQuiz() {
+
+      currentChoice = 0;
+
+      foods.forEach(food => {
+        food.score = 1000;
+      });
+
+      results.style.display = "none";
+      quiz.style.display = "block";
+
+      showMatchup();
+    }
+
+
+    /*
+      Button events
+    */
+
+    foodA.addEventListener("click", () => {
+      chooseFood(foodA.dataset.food);
+    });
+
+    foodB.addEventListener("click", () => {
+      chooseFood(foodB.dataset.food);
+    });
+
+    restart.addEventListener("click", restartQuiz);
+
+
+    /*
+      Start the quiz
+    */
+
+    showMatchup();
+
+  </script>
+
+</body>
+</html>
