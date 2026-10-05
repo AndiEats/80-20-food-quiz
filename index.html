@@ -1,218 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My 80/20 Food Ranking</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<title>80/20 Food Preference Quiz</title>
 
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f7f3ed;
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        border-radius: 24px;
+        padding: 35px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
+    }
+
+    h1 {
+        text-align: center;
+        margin: 0 0 10px;
+        font-size: 36px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #777;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+
+    .progress-container {
+        margin-bottom: 30px;
+    }
+
+    .progress-text {
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 8px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #e8e8e8;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #78a878;
+        border-radius: 20px;
+        transition: width 0.25s ease;
+    }
+
+    .choices {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    .food-card {
+        border: 3px solid transparent;
+        border-radius: 20px;
+        padding: 18px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.15s ease, border-color 0.15s ease,
+                    box-shadow 0.15s ease;
+        background: #fafafa;
+    }
+
+    .food-card:hover {
+        transform: translateY(-5px);
+        border-color: #78a878;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+    }
+
+    .food-image {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 16px;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .food-name {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .results {
+        display: none;
+    }
+
+    .results h2 {
+        text-align: center;
+        margin-top: 0;
+        font-size: 30px;
+    }
+
+    .results-subtitle {
+        text-align: center;
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    .ranking {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #f7f7f7;
+        padding: 12px 16px;
+        border-radius: 14px;
+    }
+
+    .rank-number {
+        width: 35px;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .rank-image {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .rank-name {
+        flex: 1;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .rank-score {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .restart-button {
+        display: block;
+        margin: 30px auto 0;
+        border: none;
+        background: #78a878;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .restart-button:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+
+    @media (max-width: 650px) {
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f7f3ed;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            padding: 10px;
         }
 
-        .app {
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            text-align: center;
+        .container {
+            padding: 22px;
+            border-radius: 18px;
         }
 
         h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        .progress-section {
-            margin-bottom: 30px;
-        }
-
-        #progressText {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #e8e4df;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        #progressFill {
-            height: 100%;
-            width: 0%;
-            background: #7aa37a;
-            border-radius: 20px;
-            transition: width 0.3s ease;
+            font-size: 28px;
         }
 
         .choices {
-            display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            gap: 12px;
         }
 
         .food-card {
-            border: 3px solid #e5e0d9;
-            border-radius: 20px;
-            padding: 30px 20px;
-            cursor: pointer;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            background: #fff;
-        }
-
-        .food-card:hover {
-            transform: translateY(-5px);
-            border-color: #7aa37a;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .food-emoji {
-            font-size: 5rem;
-            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 14px;
         }
 
         .food-name {
-            font-size: 1.4rem;
-            font-weight: bold;
+            font-size: 17px;
         }
 
-        #results {
-            display: none;
-        }
-
-        #results h2 {
-            font-size: 2rem;
+        .food-image {
+            border-radius: 10px;
             margin-bottom: 10px;
         }
 
-        .results-subtitle {
-            color: #666;
-            margin-bottom: 25px;
+        .rank-image {
+            width: 45px;
+            height: 45px;
         }
 
-        .ranking {
-            text-align: left;
-            margin: 0 auto 30px;
-            max-width: 600px;
+        .rank-name {
+            font-size: 16px;
         }
-
-        .ranking-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 18px;
-            margin-bottom: 10px;
-            background: #f7f3ed;
-            border-radius: 14px;
-            font-size: 1.1rem;
-        }
-
-        .rank-number {
-            font-weight: bold;
-            width: 35px;
-        }
-
-        .rank-emoji {
-            font-size: 1.8rem;
-        }
-
-        .restart-button {
-            border: none;
-            background: #7aa37a;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 14px 28px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-
-        .restart-button:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        @media (max-width: 650px) {
-            .app {
-                padding: 25px 18px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .choices {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .food-card {
-                padding: 25px 15px;
-            }
-
-            .food-emoji {
-                font-size: 4rem;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
     <div id="quiz">
 
-        <h1>My 80/20 Food Ranking</h1>
+        <h1>80/20 Food Preference Quiz</h1>
 
-        <p class="subtitle">
-            Choose the food you would rather have.
-            Your choices will create your personalized ranking.
-        </p>
+        <div class="subtitle">
+            Pick the food you'd rather have.
+        </div>
 
-        <div class="progress-section">
-            <div id="progressText">Choice 1 of 20</div>
+        <div class="progress-container">
+            <div class="progress-text" id="progressText">
+                Question 1 of 40
+            </div>
 
             <div class="progress-bar">
-                <div id="progressFill"></div>
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
 
         <div class="choices">
 
             <div class="food-card" id="foodCard1" onclick="chooseFood(0)">
-                <div class="food-emoji" id="emoji1">🍕</div>
-                <div class="food-name" id="foodName1">Pizza</div>
+                <img
+                    class="food-image"
+                    id="foodImage1"
+                    src=""
+                    alt=""
+                >
+
+                <div class="food-name" id="foodName1"></div>
             </div>
 
             <div class="food-card" id="foodCard2" onclick="chooseFood(1)">
-                <div class="food-emoji" id="emoji2">🍪</div>
-                <div class="food-name" id="foodName2">Cookies</div>
+                <img
+                    class="food-image"
+                    id="foodImage2"
+                    src=""
+                    alt=""
+                >
+
+                <div class="food-name" id="foodName2"></div>
             </div>
 
         </div>
@@ -220,18 +280,18 @@
     </div>
 
 
-    <div id="results">
+    <div class="results" id="results">
 
         <h2>Your Food Ranking</h2>
 
-        <p class="results-subtitle">
-            Based on the choices you made.
-        </p>
+        <div class="results-subtitle">
+            Based on your choices throughout the quiz.
+        </div>
 
         <div class="ranking" id="ranking"></div>
 
         <button class="restart-button" onclick="restartQuiz()">
-            Start Over
+            Take Quiz Again
         </button>
 
     </div>
@@ -245,7 +305,7 @@
     // QUIZ SETTINGS
     // ==========================================
 
-    const TOTAL_CHOICES = 20;
+    const TOTAL_QUESTIONS = 40;
 
 
     // ==========================================
@@ -254,43 +314,93 @@
 
     const foods = [
         {
-            name: "Pizza",
-            emoji: "🍕",
-            score: 1000
-        },
-        {
             name: "Donuts",
-            emoji: "🍩",
-            score: 1000
-        },
-        {
-            name: "Ice Cream",
-            emoji: "🍦",
-            score: 1000
-        },
-        {
-            name: "French Fries",
-            emoji: "🍟",
+            image: "donuts.jpg",
             score: 1000
         },
         {
             name: "Cookies",
-            emoji: "🍪",
+            image: "cookies.jpg",
             score: 1000
         },
         {
-            name: "Chocolate",
-            emoji: "🍫",
-            score: 1000
-        },
-        {
-            name: "Burgers",
-            emoji: "🍔",
+            name: "Brownies",
+            image: "brownies.jpg",
             score: 1000
         },
         {
             name: "Cake",
-            emoji: "🍰",
+            image: "cake.jpg",
+            score: 1000
+        },
+        {
+            name: "Chocolate",
+            image: "chocolate.jpg",
+            score: 1000
+        },
+        {
+            name: "Hard Candy",
+            image: "hard-candy.jpg",
+            score: 1000
+        },
+        {
+            name: "Pie",
+            image: "pie.jpg",
+            score: 1000
+        },
+        {
+            name: "Cupcakes",
+            image: "cupcakes.jpg",
+            score: 1000
+        },
+        {
+            name: "Rice Krispy Treats",
+            image: "rice-krispy-treats.jpg",
+            score: 1000
+        },
+        {
+            name: "Pizza",
+            image: "pizza.jpg",
+            score: 1000
+        },
+        {
+            name: "French Fries",
+            image: "french-fries.jpg",
+            score: 1000
+        },
+        {
+            name: "Pretzels",
+            image: "pretzels.jpg",
+            score: 1000
+        },
+        {
+            name: "Soda",
+            image: "soda.jpg",
+            score: 1000
+        },
+        {
+            name: "Hot Cocoa",
+            image: "hot-cocoa.jpg",
+            score: 1000
+        },
+        {
+            name: "Milkshakes",
+            image: "milkshakes.jpg",
+            score: 1000
+        },
+        {
+            name: "Ice Cream",
+            image: "ice-cream.jpg",
+            score: 1000
+        },
+        {
+            name: "Lemonade",
+            image: "lemonade.jpg",
+            score: 1000
+        },
+        {
+            name: "Slushies",
+            image: "slushies.jpg",
             score: 1000
         }
     ];
@@ -300,120 +410,244 @@
     // QUIZ VARIABLES
     // ==========================================
 
-    let currentChoice = 0;
-
-    // This remembers every pair that has already been shown.
-    // A Set is useful because it automatically keeps each pair unique.
-    let usedPairs = new Set();
+    let questions = [];
+    let currentQuestion = 0;
+    let currentPair = [];
 
 
     // ==========================================
-    // START THE QUIZ
+    // SHUFFLE FUNCTION
+    // ==========================================
+
+    function shuffle(array) {
+
+        const shuffled = [...array];
+
+        for (let i = shuffled.length - 1; i > 0; i--) {
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [shuffled[i], shuffled[j]] =
+            [shuffled[j], shuffled[i]];
+        }
+
+        return shuffled;
+    }
+
+
+    // ==========================================
+    // CREATE A UNIQUE PAIR KEY
+    // ==========================================
+
+    function pairKey(a, b) {
+
+        const smaller = Math.min(a, b);
+        const larger = Math.max(a, b);
+
+        return `${smaller}-${larger}`;
+    }
+
+
+    // ==========================================
+    // BUILD THE ENTIRE QUIZ BEFORE IT STARTS
+    // ==========================================
+
+    function buildQuestionList() {
+
+        questions = [];
+
+        const usedPairs = new Set();
+
+        /*
+            First, we make sure EVERY food appears.
+
+            We shuffle all foods, then connect each new
+            food to one that has already appeared.
+
+            With 18 foods, this creates 17 questions
+            that guarantee all 18 foods are included.
+        */
+
+        const foodOrder = shuffle(
+            foods.map((food, index) => index)
+        );
+
+        const includedFoods = [foodOrder[0]];
+
+        for (let i = 1; i < foodOrder.length; i++) {
+
+            const newFood = foodOrder[i];
+
+            const randomExistingFood =
+                includedFoods[
+                    Math.floor(
+                        Math.random() * includedFoods.length
+                    )
+                ];
+
+            const key = pairKey(
+                newFood,
+                randomExistingFood
+            );
+
+            questions.push({
+                a: newFood,
+                b: randomExistingFood
+            });
+
+            usedPairs.add(key);
+
+            includedFoods.push(newFood);
+        }
+
+
+        /*
+            Now we have guaranteed that every food appears.
+
+            We need 40 total questions, so we fill the
+            remaining spots with random unused pairs.
+        */
+
+        const allPairs = [];
+
+        for (let a = 0; a < foods.length; a++) {
+
+            for (let b = a + 1; b < foods.length; b++) {
+
+                const key = pairKey(a, b);
+
+                if (!usedPairs.has(key)) {
+
+                    allPairs.push({
+                        a: a,
+                        b: b,
+                        key: key
+                    });
+
+                }
+            }
+        }
+
+
+        const shuffledRemainingPairs =
+            shuffle(allPairs);
+
+
+        const remainingQuestions =
+            TOTAL_QUESTIONS - questions.length;
+
+
+        for (
+            let i = 0;
+            i < remainingQuestions &&
+            i < shuffledRemainingPairs.length;
+            i++
+        ) {
+
+            questions.push({
+                a: shuffledRemainingPairs[i].a,
+                b: shuffledRemainingPairs[i].b
+            });
+
+        }
+
+
+        /*
+            Shuffle the finished question list.
+
+            This is important because otherwise the
+            guaranteed-coverage questions would always
+            happen at the beginning.
+        */
+
+        questions = shuffle(questions);
+
+    }
+
+
+    // ==========================================
+    // START QUIZ
     // ==========================================
 
     function startQuiz() {
 
-        currentChoice = 0;
-
-        usedPairs.clear();
+        currentQuestion = 0;
+        currentPair = [];
 
         foods.forEach(food => {
             food.score = 1000;
         });
 
+        buildQuestionList();
+
         document.getElementById("quiz").style.display = "block";
         document.getElementById("results").style.display = "none";
 
-        showNextPair();
+        showNextQuestion();
     }
 
 
     // ==========================================
-    // FIND A NEW PAIR
+    // SHOW NEXT QUESTION
     // ==========================================
 
-    function showNextPair() {
+    function showNextQuestion() {
 
-        // If we've completed all choices, show the results.
-        if (currentChoice >= TOTAL_CHOICES) {
+        if (currentQuestion >= questions.length) {
+
             showResults();
             return;
+
         }
 
 
-        let firstIndex;
-        let secondIndex;
-        let pairKey;
-
-        // Keep picking random foods until we find
-        // a pair that has NOT been shown before.
-        do {
-
-            firstIndex = Math.floor(Math.random() * foods.length);
-
-            secondIndex = Math.floor(Math.random() * foods.length);
-
-            // Make sure the two foods are different.
-            if (firstIndex === secondIndex) {
-                continue;
-            }
-
-            // Sort the numbers so that:
-            // Pizza vs Cookies
-            // and
-            // Cookies vs Pizza
-            // produce the same pair key.
-            const smallerIndex = Math.min(firstIndex, secondIndex);
-            const largerIndex = Math.max(firstIndex, secondIndex);
-
-            pairKey = `${smallerIndex}-${largerIndex}`;
-
-        } while (usedPairs.has(pairKey));
+        currentPair = [
+            questions[currentQuestion].a,
+            questions[currentQuestion].b
+        ];
 
 
-        // Remember this pair so it can't appear again.
-        usedPairs.add(pairKey);
+        const food1 = foods[currentPair[0]];
+        const food2 = foods[currentPair[1]];
 
 
-        // Display the two foods.
-        document.getElementById("emoji1").textContent =
-            foods[firstIndex].emoji;
+        document.getElementById("foodImage1").src =
+            food1.image;
+
+        document.getElementById("foodImage1").alt =
+            food1.name;
 
         document.getElementById("foodName1").textContent =
-            foods[firstIndex].name;
+            food1.name;
 
-        document.getElementById("emoji2").textContent =
-            foods[secondIndex].emoji;
+
+        document.getElementById("foodImage2").src =
+            food2.image;
+
+        document.getElementById("foodImage2").alt =
+            food2.name;
 
         document.getElementById("foodName2").textContent =
-            foods[secondIndex].name;
+            food2.name;
 
 
-        // Save which foods are currently being compared.
-        currentPair = [firstIndex, secondIndex];
+        const questionNumber = currentQuestion + 1;
 
-
-        // Update progress.
         document.getElementById("progressText").textContent =
-            `Choice ${currentChoice + 1} of ${TOTAL_CHOICES}`;
+            `Question ${questionNumber} of ${questions.length}`;
 
-        const progressPercent =
-            (currentChoice / TOTAL_CHOICES) * 100;
+
+        const progress =
+            (currentQuestion / questions.length) * 100;
 
         document.getElementById("progressFill").style.width =
-            `${progressPercent}%`;
+            `${progress}%`;
+
     }
 
 
     // ==========================================
-    // CURRENT PAIR
-    // ==========================================
-
-    let currentPair = [];
-
-
-    // ==========================================
-    // WHEN THE USER CHOOSES A FOOD
+    // CHOOSE FOOD
     // ==========================================
 
     function chooseFood(choice) {
@@ -423,92 +657,94 @@
         const otherIndex = currentPair[1 - choice];
 
 
-        // Give the chosen food points.
+        // Winner gets points
         foods[chosenIndex].score += 25;
 
-        // Take points away from the food that wasn't chosen.
+        // Food that wasn't chosen loses points
         foods[otherIndex].score -= 25;
 
 
-        // Move to the next question.
-        currentChoice++;
+        currentQuestion++;
 
-        showNextPair();
+        showNextQuestion();
+
     }
 
 
     // ==========================================
-    // SHOW FINAL RESULTS
+    // SHOW RESULTS
     // ==========================================
 
     function showResults() {
 
-        document.getElementById("quiz").style.display = "none";
-        document.getElementById("results").style.display = "block";
+        document.getElementById("quiz").style.display =
+            "none";
+
+        document.getElementById("results").style.display =
+            "block";
+
+        document.getElementById("progressFill").style.width =
+            "100%";
 
 
-        // Sort foods from highest score to lowest score.
-        const sortedFoods = [...foods].sort(
+        const rankedFoods = [...foods].sort(
             (a, b) => b.score - a.score
         );
 
 
-        const rankingContainer =
-            document.getElementById("ranking");
+        const ranking = document.getElementById("ranking");
 
-        rankingContainer.innerHTML = "";
+        ranking.innerHTML = "";
 
 
-        sortedFoods.forEach((food, index) => {
+        rankedFoods.forEach((food, index) => {
 
-            const rankingItem =
-                document.createElement("div");
+            const item = document.createElement("div");
 
-            rankingItem.className = "ranking-item";
+            item.className = "ranking-item";
 
-            rankingItem.innerHTML = `
+
+            item.innerHTML = `
                 <div class="rank-number">
-                    ${index + 1}.
+                    ${index + 1}
                 </div>
 
-                <div class="rank-emoji">
-                    ${food.emoji}
-                </div>
+                <img
+                    class="rank-image"
+                    src="${food.image}"
+                    alt="${food.name}"
+                >
 
-                <div>
+                <div class="rank-name">
                     ${food.name}
+                </div>
+
+                <div class="rank-score">
+                    ${food.score} pts
                 </div>
             `;
 
-            rankingContainer.appendChild(rankingItem);
+
+            ranking.appendChild(item);
 
         });
+
     }
 
 
     // ==========================================
-    // RESTART
+    // RESTART QUIZ
     // ==========================================
 
     function restartQuiz() {
 
-        currentChoice = 0;
+        startQuiz();
 
-        usedPairs.clear();
-
-        foods.forEach(food => {
-            food.score = 1000;
-        });
-
-        document.getElementById("results").style.display = "none";
-        document.getElementById("quiz").style.display = "block";
-
-        showNextPair();
     }
 
 
     // ==========================================
-    // START EVERYTHING
+    // START AUTOMATICALLY
     // ==========================================
 
     startQuiz();
